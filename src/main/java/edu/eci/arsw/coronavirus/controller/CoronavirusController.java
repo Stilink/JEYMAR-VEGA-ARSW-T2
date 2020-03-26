@@ -1,7 +1,5 @@
 package edu.eci.arsw.coronavirus.controller;
 
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +57,7 @@ public class CoronavirusController {
     public ResponseEntity<?> getMapInfoByCountry(@PathVariable String pais){
         try{
             double[] info = coronavirusServices.getMapInfoByCountry(pais);
-            return new ResponseEntity<>(Arrays.toString(info),HttpStatus.ACCEPTED);        
+            return new ResponseEntity<>(info,HttpStatus.ACCEPTED);        
         }catch(CountryNotFound cne){
             cne.printStackTrace();
             return new ResponseEntity<>("Fallo en la obtención del país - NOT FOUND", HttpStatus.NOT_FOUND);

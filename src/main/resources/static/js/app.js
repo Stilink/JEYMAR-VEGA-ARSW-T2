@@ -37,11 +37,11 @@ var App = (function(){
             if(error){
                 console.log(error);
             }else{
-                let countryInfo = data;
+                let countryInfo = data;  
                 let latitud = countryInfo[0];
                 let longitud = countryInfo[1];
-                let market = { latitud, longitud};
-                plotMarkers(market);
+                var myLatLng = {lat: latitud, lng: longitud};  
+                plotMarkers(myLatLng);
             }
         })
     }

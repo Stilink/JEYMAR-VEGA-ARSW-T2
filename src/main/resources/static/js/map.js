@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    if (document.querySelectorAll('#mapHtml').length > 0)
+    if (document.querySelectorAll('#map').length > 0)
     {
       if (document.querySelector('html').lang)
         lang = document.querySelector('html').lang;
@@ -15,16 +15,15 @@ document.addEventListener('DOMContentLoaded', function () {
   
   var map;
   
-  function initMap()
+  function initMap(centerMarker)
   {
-    map = new google.maps.Map(document.getElementById('mapHtml'), {
-        center: {lat: -34.397, lng: 150.644},
-        zoom: 1
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: centerMarker,
+        zoom: 0
     });
   
     fetch('https://raw.githubusercontent.com/jayshields/google-maps-api-template/master/markers.json')
-      .then(function(response){return response.json()})
-      .then(plotMarkers);
+      .then(function(response){return response.json()});
   }
   
   var markers;
@@ -32,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
   
   function plotMarkers(marker)
   {
+    initMap();
     markers = [];
     bounds = new google.maps.LatLngBounds();
     var position = new google.maps.LatLng(marker.lat, marker.lng);
