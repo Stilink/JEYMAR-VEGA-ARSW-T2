@@ -25,6 +25,7 @@ var App = (function(){
                 console.log(error);
             }else{
                 let country = data;
+                initMap(country.lat, country.lng);
                 $("#countryInfo").append("<thead><tr> <th>Country</th>  <th>Num deaths</th>    <th>Num infected</th>    <th>Num cured</th></tr></thead> <tbody></tbody>");
                 $("#countryInfo tbody").append("<tr><td>" + country.nombre + "</td><td>" + country.muertos + "</td><td> "+ country.infectados + "</td><td>"+ country.curados + "</td></tr>")
             }

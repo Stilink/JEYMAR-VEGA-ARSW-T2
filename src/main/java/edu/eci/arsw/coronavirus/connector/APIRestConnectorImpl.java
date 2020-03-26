@@ -67,7 +67,7 @@ public class APIRestConnectorImpl implements APIRestConnector {
             country = (JSONArray) data.get("covid19Stats");
                      
         } catch (UnirestException unireste) {
-            throw new APIException("Fallo al conectarse con la API");
+            throw new APIException("Fallo al conectarse con la API - Stats");
         }catch(Exception e){
             e.printStackTrace();
         }

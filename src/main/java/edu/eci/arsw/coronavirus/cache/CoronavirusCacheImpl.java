@@ -18,6 +18,7 @@ import edu.eci.arsw.coronavirus.exception.CountryNotFound;
 import edu.eci.arsw.coronavirus.model.Ciudad;
 import edu.eci.arsw.coronavirus.model.Pais;
 import edu.eci.arsw.coronavirus.model.Provincia;
+import edu.eci.arsw.coronavirus.services.APIMapInformation;
 import edu.eci.arsw.coronavirus.services.APIRestConnector;
 
 /**
@@ -27,10 +28,16 @@ import edu.eci.arsw.coronavirus.services.APIRestConnector;
 public class CoronavirusCacheImpl implements CoronavirusCache {
 
     /**
-     * Api relacionada, la cual originalmente es la api del parcial
+     * Api relacionada, la cual originalmente es la api del parcial.
      */
     @Autowired
     private APIRestConnector connector;
+
+    /**
+     * Api relacionada para el consumo de latitudes y longitudes.
+     */
+    @Autowired
+    private APIMapInformation mapConnector;
 
     private final Map<String, Pais> paises = new HashMap<>();
     private Date lastModified;
@@ -75,6 +82,23 @@ public class CoronavirusCacheImpl implements CoronavirusCache {
             return paises.get(name);
         }
         
+    }
+
+    /**
+     * Solicita la información relacionada a la ubicación.
+     * @param country Nombre del país solicitado
+     * @return Vector de tamaño 2 que representa la latitud y la longitud del pais
+     * @throws APIException En caso de fallo de la api.
+     * @throws CountryNotFound En caso de no encontrar el país solicitado.
+     */
+    @Override
+    public double[] getMapInfoByCountry(String name) throws APIException, CountryNotFound{
+        if(!paises.containsKey(name)) throw new CountryNotFound("Pais no encontrado");
+        JSONArray jsonResult = mapConnector.getCountryInformationByName(name);
+        double latitud = Double.parseDouble(jsonResult.get(0).toString());
+        double longitud = Double.parseDouble(jsonResult.get(1).toString());
+        double[] datos = new double[]{latitud, longitud};
+        return datos;
     }
 
     /**
