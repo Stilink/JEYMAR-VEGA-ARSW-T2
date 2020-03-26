@@ -1,10 +1,8 @@
 package edu.eci.arsw.coronavirus.cache;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,16 +26,26 @@ import edu.eci.arsw.coronavirus.services.APIRestConnector;
 @Component
 public class CoronavirusCacheImpl implements CoronavirusCache {
 
+    /**
+     * Api relacionada, la cual originalmente es la api del parcial
+     */
     @Autowired
     private APIRestConnector connector;
 
     private final Map<String, Pais> paises = new HashMap<>();
     private Date lastModified;
+    // Parametro que representa el numero de minutos en milisegundos para el control del cache.
+    private long minutosEnMilisegundos = 300000;
 
+    /**
+     * Solicita a la api relacionada la información de todos los paises
+     * @return Conjunto con toda la información
+     */
     @Override
     public Set<Pais> getAllCountries() {
         Set<Pais> result = new HashSet<>();
         if (!cacheVigente()) { 
+            System.out.println("PETICION A LA API - "+new Date(System.currentTimeMillis()));
             paises.clear();
             JSONArray json = null;
             try {
@@ -52,28 +60,30 @@ public class CoronavirusCacheImpl implements CoronavirusCache {
         return result;
     }
 
+    /**
+     * Solicita a la api relacionada la información de todos los paises
+     * @return Conjunto con toda la información
+     */
     @Override
     public Pais getCountryByName(String name) throws CountryNotFound{
         if (cacheVigente()) {
             if(!paises.containsKey(name)) throw new CountryNotFound("Pais no encontrado");
             return paises.get(name);
+        }else{
+            if(!paises.containsKey(name)) throw new CountryNotFound("Pais no encontrado");
+            getAllCountries();
+            return paises.get(name);
         }
-        JSONArray json = null;
-        try {
-            json = connector.getCountryByName(name);
-        } catch (APIException e) {
-            e.printStackTrace();
-            throw new CountryNotFound("Pais no encontrado");
-        }
-        if(json==null || json.size()==0) throw new CountryNotFound("Pais no encontrado");
-        Set<Pais> result = mapJsonToSet(json);
-        List<Pais> resultToList = new ArrayList<>();
-        resultToList.addAll(result);
-        Pais country = resultToList.get(0);
-        return country;
+        
     }
 
+    /**
+     * Mapea la información de un json array a conjunto de paises
+     * @param countriesJSON Información obtenida de la petición a la API como JSONArray
+     * @return Conjunto de paises extraidos de la información.
+     */
     private Set<Pais> mapJsonToSet(JSONArray countriesJSON) {
+        lastModified = new Date(System.currentTimeMillis());
         Map<String, Pais> countries = new HashMap<>();
         Pais pais = null;
         Provincia provincia = null;
@@ -98,6 +108,11 @@ public class CoronavirusCacheImpl implements CoronavirusCache {
         return paises;
     }
 
+    /**
+     * Mapea un objeto JSON a un POJO Ciudad.
+     * @param cityJSON Objeto JSON con la información de la ciudad.
+     * @return Objeto ciudad con la información traida en el JSON.
+     */
     private Ciudad mapCiudad(JSONObject cityJSON) {
         String nombre = (String) cityJSON.get("city");
         String provincia = (String) cityJSON.get("province");
@@ -109,16 +124,23 @@ public class CoronavirusCacheImpl implements CoronavirusCache {
         return ciudad;
     }
 
+    /**
+     * Rellena el contenedor del cache.
+     * @param paises Conjunto de paises obtenidos de la API.
+     */
     private void fillMap(Set<Pais> paises) {
         for (Pais pais : paises) {
             this.paises.put(pais.getNombre(), pais);
         }
     }
 
+    /**
+     * Calculador de la vigencia del cache.
+     * @return Valor de verdad que responde a "¿El cache es vigente?"
+     */
     private boolean cacheVigente() {
         long confirmador = System.currentTimeMillis()-lastModified.getTime();
-        if(confirmador>=300000){
-            lastModified = new Date(System.currentTimeMillis());
+        if(confirmador>=minutosEnMilisegundos){
             return false;
         }
         return true;
@@ -128,7 +150,7 @@ public class CoronavirusCacheImpl implements CoronavirusCache {
 
     @PostConstruct
     private void postConstruct() {
-        lastModified = new Date(System.currentTimeMillis()-310000);
+        lastModified = new Date(System.currentTimeMillis()-minutosEnMilisegundos-1000);
         getAllCountries();
     }
 }
