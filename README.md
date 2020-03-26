@@ -34,7 +34,7 @@ Para la ejecución, en una terminal, consola o linea de comados:
 
 ## Bonos
 
-1. El primer bono teóricamente esta hecho, sin embargo no es exactamente como lo solicitaba el punto. Para evidenciar su existencia se debe ir a la clase.
+1. El primer bono teóricamente esta hecho, sin embargo no es exactamente como lo solicitaba el punto. Para evidenciar su existencia se debe ir a la clase CacheImpl dentro del paquete cache.
 
 
 ## Autor
