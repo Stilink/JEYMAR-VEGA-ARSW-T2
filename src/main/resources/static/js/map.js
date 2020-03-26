@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    if (document.querySelectorAll('#map').length > 0)
+    if (document.querySelectorAll('#mapHtml').length > 0)
     {
       if (document.querySelector('html').lang)
         lang = document.querySelector('html').lang;
@@ -8,18 +8,18 @@ document.addEventListener('DOMContentLoaded', function () {
   
       var js_file = document.createElement('script');
       js_file.type = 'text/javascript';
-      js_file.src = 'https://maps.googleapis.com/maps/api/js?callback=initMap&signed_in=true&language=' + lang;
+      js_file.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDklz_vypQM1veXLWkmvUjEu8NIRtDZ9kM&callback=initMap&signed_in=true&language=' + lang;
       document.getElementsByTagName('head')[0].appendChild(js_file);
     }
   });
   
   var map;
   
-  function initMap(latitud, longitud)
+  function initMap()
   {
     map = new google.maps.Map(document.getElementById('mapHtml'), {
-      center: {lat: latitud, lng: longitud},
-      zoom: 1
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 1
     });
   
     fetch('https://raw.githubusercontent.com/jayshields/google-maps-api-template/master/markers.json')
@@ -30,24 +30,21 @@ document.addEventListener('DOMContentLoaded', function () {
   var markers;
   var bounds;
   
-  function plotMarkers(m)
+  function plotMarkers(marker)
   {
     markers = [];
     bounds = new google.maps.LatLngBounds();
+    var position = new google.maps.LatLng(marker.lat, marker.lng);
   
-    m.forEach(function (marker) {
-      var position = new google.maps.LatLng(marker.lat, marker.lng);
+    markers.push(
+      new google.maps.Marker({
+        position: position,
+        map: map,
+        animation: google.maps.Animation.DROP
+      })
+    );
   
-      markers.push(
-        new google.maps.Marker({
-          position: position,
-          map: map,
-          animation: google.maps.Animation.DROP
-        })
-      );
-  
-      bounds.extend(position);
-    });
+    bounds.extend(position);
   
     map.fitBounds(bounds);
   }
