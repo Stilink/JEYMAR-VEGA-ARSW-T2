@@ -7,6 +7,8 @@ Este repositorio contiene el código relacionado al examen de la asignatura ARSW
 El sistema desplegado se encuentra [aqui](https://jeymar-vega-arsw-t2.herokuapp.com/).
 Si no se pudo ahí, acceder a este enlace: https://jeymar-vega-arsw-t2.herokuapp.com/
 
+Como aclaración: El mapa funciona, pero cuando marca el punto agrega un zoom gigantezco al mapa, por lo cual para una correcta visualización debería quitarsele el zoom.
+
 ![](ArchitectureDiagrams/DeploymentDiagram.png)
 
 ### Diagrama de Componentes
